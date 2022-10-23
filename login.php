@@ -1,3 +1,29 @@
+<?php
+session_start();
+require "functions.php";
+
+if($_SESSION){
+    if($_SESSION['email']){
+        header('Location: index.php');
+    }
+}
+
+if(isset($_POST['submit'])){
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+
+    $resultValidatedUser = json_decode(checkValidatedUser($email, $password, $ip_address), true);
+
+    if($resultValidatedUser['status'] == 'success'){
+        updateIP($ip_address, $email);
+        $_SESSION['email'] = $email;
+        $_SESSION['ip_address'] = $ip_address;
+        header('Location: index.php');
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,16 +44,16 @@
                 <h2 class="text-center mb-4 text-primary">Login Form</h2>
                 <form action="" method="POST">
                     <div class="mb-3">
-                        <label for="exampleInputEmail1" class="form-label">Email address</label>
-                        <input type="email" class="form-control border border-primary" id="email" name="email">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="text" class="form-control border border-primary" id="email" name="email">
                     </div>
                     <div class="mb-3">
-                        <label for="exampleInputPassword1" class="form-label">Password</label>
+                        <label for="email" class="form-label">Password</label>
                         <input type="password" class="form-control border border-primary" id="password" name="password">
                     </div>
                     <p class="small"><a class="text-primary" href="#">Forgot password?</a></p>
                     <div class="d-grid">
-                        <button class="btn btn-primary" type="submit">Login</button>
+                        <button class="btn btn-primary" type="submit" name="submit">Login</button>
                     </div>
                 </form>
                 <div class="mt-3">
